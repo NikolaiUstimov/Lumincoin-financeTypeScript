@@ -44,6 +44,11 @@ export class AllFinanceEdit {
   private async getCategoryOption(type: string): Promise<void> {
     const options: CategoryType[] = await CommonUtils.getOperationCategory(type);
     (this.selectCategoryElement as HTMLSelectElement).innerHTML = '';
+    if (options.length === 0) {
+      console.error('Нет доступных категорий для указанного типа');
+      return;
+    }
+
     for (let i = 0; i < options.length; i++) {
       const option: HTMLOptionElement = document.createElement("option");
       option.value = options[i].title;
@@ -124,7 +129,7 @@ export class AllFinanceEdit {
 
         const result: CategoryResponseType | ErrorResponseType = await HttpService.request(config.host + '/operations/' + id, 'PUT', {
           type: (this.selectTypeElement as HTMLSelectElement).value,
-          amount: (this.inputAmountElement as HTMLInputElement).value,
+          amount: +(this.inputAmountElement as HTMLInputElement).value,
           date: (this.inputDateElement as HTMLInputElement).value,
           comment: (this.inputCommentElement as HTMLInputElement).value,
           category_id: categoryId,

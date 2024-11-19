@@ -31,11 +31,11 @@ export class CommonUtils {
       if (Array.isArray(result)) {
         return result;
       } else if (result.error) {
-        console.error(result.message);
+        console.error("Ошибка получения категорий", result.message);
+        throw new Error(result.message);
       }
     } catch (e) {
-      console.error(e);
-      return [];
+      console.error("Ошибка выполнения запроса", e);
     }
     return [];
   }

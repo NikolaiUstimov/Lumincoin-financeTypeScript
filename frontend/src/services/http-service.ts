@@ -24,7 +24,7 @@ export class HttpService {
 
     if (response.status < 200 || response.status >= 300) {
       if (response.status === 401) {
-        const result = await AuthUtils.updateTokens();
+        const result: boolean = await AuthUtils.updateTokens();
         if (result) {
           return await this.request(url, method, body);
         } else {
