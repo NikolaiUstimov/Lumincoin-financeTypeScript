@@ -3,7 +3,6 @@ import {CommonUtils} from "../../utils/common-utils";
 import {HttpService} from "../../services/http-service";
 import config from "../../config/config";
 import {CategoryType} from "../../types/category.type";
-import {CategoryResponseType} from "../../types/category-response.type";
 import {ErrorResponseType} from "../../types/error-response.type";
 
 export class AllFinanceAdd {
@@ -22,9 +21,10 @@ export class AllFinanceAdd {
     this.inputDateElement = document.getElementById("inputDate") as HTMLInputElement;
     this.inputCommentElement = document.getElementById("inputComment") as HTMLInputElement;
     this.btnCategoryAddElement = document.getElementById("categoryAdd") as HTMLButtonElement;
-    console.log(this.btnCategoryAddElement)
+
     this.btnCategoryAddBackElement = document.getElementById("categoryAddBack") as HTMLButtonElement;
-    const type: string = UrlUtils.getUrlParams('type');
+    const type: string = UrlUtils.getUrlParams('interface');
+    console.log(type)
     if (!type) {
       window.location.href = '#/all-finance';
       return;
@@ -98,25 +98,65 @@ export class AllFinanceAdd {
   }
 
   //Запрос на создание операции
+  // private async createCategory(): Promise<void> {
+  //   if (this.validateForm()) {
+  //     const categoryId: number = +(this.getOptionCategoryId() as string);
+  //     try {
+  //       const result: CategoryResponseType | ErrorResponseType = await HttpService.request(config.host + '/operations', 'POST', {
+  //         type: (this.selectTypeElement as HTMLSelectElement).value,
+  //         amount: +(this.inputAmountElement as HTMLInputElement).value,
+  //         date: (this.inputDateElement as HTMLInputElement).value,
+  //         comment: (this.inputCommentElement as HTMLInputElement).value,
+  //         category_id: categoryId
+  //       });
+  //       if ((result as CategoryResponseType) && !(result as ErrorResponseType).error) {
+  //         window.location.href = '#/all-finance';
+  //       } else if (result as ErrorResponseType) {
+  //         window.location.href = '#/main';
+  //       }
+  //     } catch (e) {
+  //       console.error(`Ошибка создания категории: ${(this.selectTypeElement as HTMLSelectElement).textContent}, ${e}`);
+  //     }
+  //   }
+  // }
+
   private async createCategory(): Promise<void> {
-    if (this.validateForm()) {
-      const categoryId: number = +(this.getOptionCategoryId() as string);
-      try {
-        const result: CategoryResponseType | ErrorResponseType = await HttpService.request(config.host + '/operations', 'POST', {
-          type: (this.selectTypeElement as HTMLSelectElement).value,
-          amount: +(this.inputAmountElement as HTMLInputElement).value,
-          date: (this.inputDateElement as HTMLInputElement).value,
-          comment: (this.inputCommentElement as HTMLInputElement).value,
-          category_id: categoryId
-        });
-        if ((result as CategoryResponseType) && !(result as ErrorResponseType).error) {
-          window.location.href = '#/all-finance';
-        } else if (result as ErrorResponseType) {
-          window.location.href = '#/main';
-        }
-      } catch (e) {
-        console.error(`Ошибка создания категории: ${(this.selectTypeElement as HTMLSelectElement).textContent}, ${e}`);
+    if (!this.validateForm()) {
+      console.error('Form validation failed');
+      return;
+    }
+
+    // Получаем значения из формы
+    const type = this.selectTypeElement?.value;
+    const amount = this.inputAmountElement?.value;
+    const date = this.inputDateElement?.value;
+    const comment = this.inputCommentElement?.value;
+    const categoryId = this.getOptionCategoryId();
+    console.log(type, amount, date, comment, categoryId);
+
+    // Проверяем, что все обязательные поля заполнены
+    if (!type || !amount || !date || !categoryId) {
+      console.error('Required fields are missing');
+      return;
+    }
+
+    try {
+      const result = await HttpService.request(config.host + '/operations', 'POST', {
+        type: type,
+        amount: parseFloat(amount), // Более безопасное преобразование
+        date: date,
+        comment: comment || '', // Если комментарий не обязателен
+        category_id: parseInt(categoryId)
+      });
+
+      if ((result as ErrorResponseType)?.error) {
+        console.error('Server error:', (result as ErrorResponseType).message);
+        window.location.href = '#/main';
+      } else {
+        window.location.href = '#/all-finance';
       }
+    } catch (e) {
+      console.error('Request failed:', e);
     }
   }
 }

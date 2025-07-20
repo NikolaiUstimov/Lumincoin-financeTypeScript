@@ -252,9 +252,7 @@ export class Router {
   }
 
   //Отображение баланса
-  // private isBalanceShow: boolean = false;
   private async showBalance(): Promise<void> {
-    // if (this.isBalanceShow) return;
     try {
       const result: BalanceType | ErrorResponseType = await HttpService.request(config.host + '/balance');
       if (result) {
@@ -262,7 +260,6 @@ export class Router {
           this.balanceShowElement.forEach((el: HTMLElement) => {el.innerText = (result as BalanceType).balance.toString()});
         }
       }
-      // this.isBalanceShow = true;
       if ((result as ErrorResponseType).error) {
         console.error((result as ErrorResponseType).message);
       }

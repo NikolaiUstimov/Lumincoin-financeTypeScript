@@ -27,10 +27,10 @@ export class AllFinance {
     this.btnAddExpenseElement = document.getElementById('addExpense') as HTMLElement;
 
     this.btnAddRevenueElement.addEventListener('click', () => {
-      window.location.hash = '#/all-finance-add' + '?type=income';
+      window.location.hash = '#/all-finance-add' + '?interface=income';
     });
     this.btnAddExpenseElement.addEventListener('click', () => {
-      window.location.hash = '#/all-finance-add' + '?type=expense';
+      window.location.hash = '#/all-finance-add' + '?interface=expense';
     });
     this.btnEventListener();
     this.getPeriodData('').then();
@@ -162,7 +162,7 @@ export class AllFinance {
       if (!result.error) {
         trElement.remove();
         window.location.href = '#/all-finance';
-        await this.getPeriodData('');
+        // await this.getPeriodData('');
       } else {
         console.error(result.message);
       }

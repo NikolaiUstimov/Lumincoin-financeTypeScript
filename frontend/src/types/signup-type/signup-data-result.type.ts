@@ -7,7 +7,7 @@ export type SignupDataResultType = {
   }
 }
 
-// export type LoginUserDataResultType = {
+// export interface LoginUserDataResultType = {
 //   userId: number,
 //   userName: string,
 //   userLastName: string
